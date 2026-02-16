@@ -11,7 +11,7 @@ import SwiftData
 @main
 struct CueApp: App {
     var body: some Scene {
-        MenuBarExtra("Cue", systemImage: "checklist.checked") {
+        MenuBarExtra("Cue", systemImage: "checklist") {
             TaskListView()
                 .modelContainer(for: DayTask.self)
                 .task {
@@ -19,5 +19,11 @@ struct CueApp: App {
                 }
         }
         .menuBarExtraStyle(.window)
+
+        Window("Settings", id: "settings") {
+            SettingsView()
+        }
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
     }
 }

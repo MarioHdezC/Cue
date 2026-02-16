@@ -10,6 +10,8 @@ import SwiftData
 
 struct AddTaskView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openWindow) private var openWindow
+    @AppStorage("reminderOffset") private var reminderOffset = 15
     let selectedDate: Date
     @State private var title = ""
     @State private var selectedTime = Date.now
@@ -22,18 +24,32 @@ struct AddTaskView: View {
 
             DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
                 .labelsHidden()
-                .frame(width: 90)
+                .frame(width: 80)
 
             Button(action: addTask) {
                 Image(systemName: "plus.circle.fill")
-                    .font(.title2)
+                    .font(.title)
             }
             .buttonStyle(.borderless)
             .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+            
+            Menu {
+                Button("Settings...") {
+                    openWindow(id: "settings")
+                }
+                Divider()
+                Button("Quit Cue") {
+                    NSApplication.shared.terminate(nil)
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .font(.title3)
+            }
+            .menuStyle(.borderlessButton)
         }
         .padding()
     }
-
+    
     private func addTask() {
         let taskTitle = title.trimmingCharacters(in: .whitespaces)
         guard !taskTitle.isEmpty else { return }
@@ -45,7 +61,7 @@ struct AddTaskView: View {
             of: selectedDate
         ) ?? selectedTime
 
-        let task = DayTask(title: taskTitle, scheduledTime: scheduledTime)
+        let task = DayTask(title: taskTitle, scheduledTime: scheduledTime, reminderOffset: reminderOffset)
         modelContext.insert(task)
         try? modelContext.save()
 
