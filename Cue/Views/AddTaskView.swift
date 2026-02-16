@@ -49,6 +49,10 @@ struct AddTaskView: View {
         modelContext.insert(task)
         try? modelContext.save()
 
+        Task {
+            await NotificationManager.shared.schedule(for: task)
+        }
+
         title = ""
     }
 }

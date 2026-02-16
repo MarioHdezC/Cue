@@ -15,6 +15,11 @@ struct TaskItemView: View {
         HStack(spacing: 12) {
             Button {
                 task.isCompleted.toggle()
+                if task.isCompleted {
+                    NotificationManager.shared.cancel(for: task)
+                } else {
+                    Task { await NotificationManager.shared.schedule(for: task) }
+                }
             } label: {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(task.isCompleted ? .green : .secondary)

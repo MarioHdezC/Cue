@@ -28,6 +28,10 @@ A macOS menu bar app for quick daily task scheduling with timed notifications. C
 
 Zero external dependencies. Built entirely with native Apple frameworks.
 
+## Built with AI
+
+This project was built in collaboration with [Claude Code](https://claude.ai/code) as an experiment to explore the possibilities of native Apple development with AI agents.
+
 ## License
 
 [MIT](LICENSE)

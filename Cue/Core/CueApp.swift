@@ -14,6 +14,9 @@ struct CueApp: App {
         MenuBarExtra("Cue", systemImage: "checklist.checked") {
             TaskListView()
                 .modelContainer(for: DayTask.self)
+                .task {
+                    await NotificationManager.shared.requestAuthorization()
+                }
         }
         .menuBarExtraStyle(.window)
     }
