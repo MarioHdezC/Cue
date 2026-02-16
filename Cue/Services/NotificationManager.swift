@@ -37,7 +37,7 @@ final class NotificationManager {
         guard triggerDate > .now else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "En \(task.reminderOffset) minutos"
+        content.title = String(localized: "In \(task.reminderOffset) minutes")
         content.body = task.title
         content.sound = .default
 

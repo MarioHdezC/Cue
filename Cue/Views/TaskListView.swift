@@ -18,9 +18,9 @@ struct TaskListView: View {
     }
 
     private var headerTitle: String {
-        if Calendar.current.isDateInToday(selectedDate) { return "Hoy" }
-        if Calendar.current.isDateInYesterday(selectedDate) { return "Ayer" }
-        if Calendar.current.isDateInTomorrow(selectedDate) { return "Mañana" }
+        if Calendar.current.isDateInToday(selectedDate) { return "Today" }
+        if Calendar.current.isDateInYesterday(selectedDate) { return "Yesterday" }
+        if Calendar.current.isDateInTomorrow(selectedDate) { return "Tomorrow" }
         let systemLocale = Locale(identifier: Locale.preferredLanguages.first ?? "en")
         return selectedDate.formatted(.dateTime.day().month(.wide).locale(systemLocale))
     }
@@ -56,7 +56,7 @@ struct TaskListView: View {
             .padding()
 
             if !isToday {
-                Button("Ir a Hoy") {
+                Button("Go to Today") {
                     selectedDate = .now
                 }
                 .buttonStyle(.borderless)
@@ -67,16 +67,16 @@ struct TaskListView: View {
             if filteredTasks.isEmpty {
                 Spacer()
                 ContentUnavailableView(
-                    "Sin tareas",
+                    "No tasks",
                     systemImage: "checklist",
-                    description: Text("Añade una tarea para empezar")
+                    description: Text("Add a task to get started")
                 )
                 Spacer()
             } else {
                 List(filteredTasks) { task in
                     TaskItemView(task: task)
                         .contextMenu {
-                            Button("Eliminar", role: .destructive) {
+                            Button("Delete", role: .destructive) {
                                 NotificationManager.shared.cancel(for: task)
                                 modelContext.delete(task)
                             }
