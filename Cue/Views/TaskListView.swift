@@ -77,6 +77,7 @@ struct TaskListView: View {
                     TaskItemView(task: task)
                         .contextMenu {
                             Button("Eliminar", role: .destructive) {
+                                NotificationManager.shared.cancel(for: task)
                                 modelContext.delete(task)
                             }
                         }
