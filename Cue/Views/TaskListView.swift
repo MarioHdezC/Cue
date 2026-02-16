@@ -17,12 +17,12 @@ struct TaskListView: View {
         allTasks.filter { Calendar.current.isDate($0.scheduledTime, inSameDayAs: selectedDate) }
     }
 
-    private var headerTitle: String {
+    private var headerTitle: LocalizedStringKey {
         if Calendar.current.isDateInToday(selectedDate) { return "Today" }
         if Calendar.current.isDateInYesterday(selectedDate) { return "Yesterday" }
         if Calendar.current.isDateInTomorrow(selectedDate) { return "Tomorrow" }
         let systemLocale = Locale(identifier: Locale.preferredLanguages.first ?? "en")
-        return selectedDate.formatted(.dateTime.day().month(.wide).locale(systemLocale))
+        return "\(selectedDate.formatted(.dateTime.day().month(.wide).locale(systemLocale)))"
     }
 
     private var isToday: Bool {
