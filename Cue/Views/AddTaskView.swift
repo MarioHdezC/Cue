@@ -16,7 +16,7 @@ struct AddTaskView: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            TextField("Nueva tarea...", text: $title)
+            TextField("New task...", text: $title)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit(addTask)
 
