@@ -12,6 +12,7 @@ struct TaskListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \DayTask.scheduledTime) private var allTasks: [DayTask]
     @State private var selectedDate: Date = .now
+    @State private var editingTaskID: String?
 
     private var filteredTasks: [DayTask] {
         allTasks.filter { Calendar.current.isDate($0.scheduledTime, inSameDayAs: selectedDate) }
@@ -74,8 +75,11 @@ struct TaskListView: View {
                 Spacer()
             } else {
                 List(filteredTasks) { task in
-                    TaskItemView(task: task)
+                    TaskItemView(task: task, editingTaskID: $editingTaskID)
                         .contextMenu {
+                            Button("Edit") {
+                                editingTaskID = task.notificationID
+                            }
                             Button("Delete", role: .destructive) {
                                 NotificationManager.shared.cancel(for: task)
                                 modelContext.delete(task)
