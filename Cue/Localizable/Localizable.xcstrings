@@ -67,6 +67,16 @@
         }
       }
     },
+    "Edit" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar"
+          }
+        }
+      }
+    },
     "Go to Today" : {
       "localizations" : {
         "es" : {

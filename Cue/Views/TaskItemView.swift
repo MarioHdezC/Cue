@@ -10,9 +10,38 @@ import SwiftData
 
 struct TaskItemView: View {
     @Bindable var task: DayTask
+    @Binding var editingTaskID: String?
+    @State private var editingTitle = ""
+    @State private var editingTime = Date.now
+
+    private var isEditing: Bool {
+        editingTaskID == task.notificationID
+    }
 
     var body: some View {
         HStack(spacing: 12) {
+            if isEditing {
+                editingContent
+            } else {
+                readOnlyContent
+            }
+        }
+        .padding(.vertical, 4)
+        .onTapGesture(count: 2) {
+            startEditing()
+        }
+        .onChange(of: editingTaskID) {
+            if editingTaskID == task.notificationID {
+                editingTitle = task.title
+                editingTime = task.scheduledTime
+            }
+        }
+    }
+
+    // MARK: - Read-only mode
+
+    private var readOnlyContent: some View {
+        Group {
             Button {
                 task.isCompleted.toggle()
                 if task.isCompleted {
@@ -37,6 +66,65 @@ struct TaskItemView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
-        .padding(.vertical, 4)
+    }
+
+    // MARK: - Editing mode
+
+    private var editingContent: some View {
+        Group {
+            TextField("", text: $editingTitle)
+                .textFieldStyle(.roundedBorder)
+                .onSubmit { saveEdit() }
+                .onExitCommand { cancelEdit() }
+
+            DatePicker("", selection: $editingTime, displayedComponents: .hourAndMinute)
+                .labelsHidden()
+                .frame(width: 80)
+
+            Button { saveEdit() } label: {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                    .font(.title3)
+            }
+            .buttonStyle(.borderless)
+
+            Button { cancelEdit() } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(.secondary)
+                    .font(.title3)
+            }
+            .buttonStyle(.borderless)
+        }
+    }
+
+    // MARK: - Actions
+
+    private func startEditing() {
+        editingTitle = task.title
+        editingTime = task.scheduledTime
+        editingTaskID = task.notificationID
+    }
+
+    private func saveEdit() {
+        let trimmed = editingTitle.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+
+        NotificationManager.shared.cancel(for: task)
+
+        task.title = trimmed
+        task.scheduledTime = Calendar.current.date(
+            bySettingHour: Calendar.current.component(.hour, from: editingTime),
+            minute: Calendar.current.component(.minute, from: editingTime),
+            second: 0,
+            of: task.scheduledTime
+        ) ?? editingTime
+
+        Task { await NotificationManager.shared.schedule(for: task) }
+
+        editingTaskID = nil
+    }
+
+    private func cancelEdit() {
+        editingTaskID = nil
     }
 }
