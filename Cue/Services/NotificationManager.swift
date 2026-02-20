@@ -27,6 +27,10 @@ final class NotificationManager {
         }
     }
 
+    func authorizationStatus() async -> UNAuthorizationStatus {
+        await center.notificationSettings().authorizationStatus
+    }
+
     // MARK: - Schedule notification
 
     func schedule(for task: DayTask) async {

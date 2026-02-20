@@ -35,10 +35,18 @@ struct AddTaskView: View {
             }
             .buttonStyle(.borderless)
             .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+            .accessibilityLabel("Add task")
             
             Menu {
                 Button("Settings...") {
                     openWindow(id: "settings")
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .milliseconds(100))
+                        NSApplication.shared.activate()
+                        for window in NSApplication.shared.windows where window.identifier?.rawValue == "settings" {
+                            window.makeKeyAndOrderFront(nil)
+                        }
+                    }
                 }
                 Divider()
                 Button("Quit Cue") {
@@ -49,6 +57,7 @@ struct AddTaskView: View {
                     .font(.title3)
             }
             .menuStyle(.borderlessButton)
+            .accessibilityLabel("Options")
         }
         .padding()
     }

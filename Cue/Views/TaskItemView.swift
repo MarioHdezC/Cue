@@ -55,6 +55,7 @@ struct TaskItemView: View {
                     .font(.title3)
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel(task.isCompleted ? "Mark as pending" : "Mark as completed")
 
             Text(task.title)
                 .strikethrough(task.isCompleted)
@@ -87,6 +88,7 @@ struct TaskItemView: View {
                     .font(.title3)
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel("Save changes")
 
             Button { cancelEdit() } label: {
                 Image(systemName: "xmark.circle.fill")
@@ -94,6 +96,7 @@ struct TaskItemView: View {
                     .font(.title3)
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel("Cancel editing")
         }
     }
 

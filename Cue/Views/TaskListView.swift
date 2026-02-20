@@ -13,6 +13,7 @@ struct TaskListView: View {
     @Query(sort: \DayTask.scheduledTime) private var allTasks: [DayTask]
     @State private var selectedDate: Date = .now
     @State private var editingTaskID: String?
+    @State private var taskToDelete: DayTask?
 
     private var filteredTasks: [DayTask] {
         allTasks.filter { Calendar.current.isDate($0.scheduledTime, inSameDayAs: selectedDate) }
@@ -32,64 +33,110 @@ struct TaskListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate)!
-                } label: {
-                    Image(systemName: "chevron.left")
-                }
-                .buttonStyle(.borderless)
-
-                Spacer()
-
-                Text(headerTitle)
-                    .font(.headline)
-
-                Spacer()
-
-                Button {
-                    selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate)!
-                } label: {
-                    Image(systemName: "chevron.right")
-                }
-                .buttonStyle(.borderless)
-            }
-            .padding()
-
-            if !isToday {
-                Button("Go to Today") {
-                    selectedDate = .now
-                }
-                .buttonStyle(.borderless)
-                .font(.caption)
-                .padding(.bottom, 4)
-            }
-
-            if filteredTasks.isEmpty {
-                Spacer()
-                ContentUnavailableView(
-                    "No tasks",
-                    systemImage: "checklist",
-                    description: Text("Add a task to get started")
-                )
-                Spacer()
-            } else {
-                List(filteredTasks) { task in
-                    TaskItemView(task: task, editingTaskID: $editingTaskID)
-                        .contextMenu {
-                            Button("Edit") {
-                                editingTaskID = task.notificationID
-                            }
-                            Button("Delete", role: .destructive) {
-                                NotificationManager.shared.cancel(for: task)
-                                modelContext.delete(task)
-                            }
-                        }
-                }
-            }
+            dateNavigationHeader
+            goToTodayButton
+            taskListContent
             AddTaskView(selectedDate: selectedDate)
         }
         .frame(width: 350, height: 400)
+    }
+
+    // MARK: - Subviews
+
+    private var dateNavigationHeader: some View {
+        HStack {
+            Button {
+                selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate)!
+            } label: {
+                Image(systemName: "chevron.left")
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Previous day")
+
+            Spacer()
+
+            Text(headerTitle)
+                .font(.headline)
+
+            Spacer()
+
+            Button {
+                selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate)!
+            } label: {
+                Image(systemName: "chevron.right")
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Next day")
+        }
+        .padding()
+    }
+
+    @ViewBuilder
+    private var goToTodayButton: some View {
+        if !isToday {
+            Button("Go to Today") {
+                selectedDate = .now
+            }
+            .buttonStyle(.borderless)
+            .font(.caption)
+            .padding(.bottom, 4)
+        }
+    }
+
+    @ViewBuilder
+    private var taskListContent: some View {
+        if filteredTasks.isEmpty {
+            Spacer()
+            ContentUnavailableView(
+                "No tasks",
+                systemImage: "checklist",
+                description: Text("Add a task to get started")
+            )
+            Spacer()
+        } else {
+            List(filteredTasks) { task in
+                if taskToDelete?.notificationID == task.notificationID {
+                    deleteConfirmationRow(for: task)
+                } else {
+                    taskRow(for: task)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Private functions
+
+    private func deleteConfirmationRow(for task: DayTask) -> some View {
+        HStack {
+            Text("Delete this task?")
+                .font(.body)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Button("Delete", role: .destructive) {
+                NotificationManager.shared.cancel(for: task)
+                modelContext.delete(task)
+                taskToDelete = nil
+            }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.red)
+            Button("Cancel") {
+                taskToDelete = nil
+            }
+            .buttonStyle(.borderless)
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func taskRow(for task: DayTask) -> some View {
+        TaskItemView(task: task, editingTaskID: $editingTaskID)
+            .contextMenu {
+                Button("Edit") {
+                    editingTaskID = task.notificationID
+                }
+                Button("Delete", role: .destructive) {
+                    taskToDelete = task
+                }
+            }
     }
 }
 
