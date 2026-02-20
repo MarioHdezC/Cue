@@ -5,8 +5,11 @@
 //  Created by Mario Hernández Corral on 15/2/26.
 //
 
+import os
 import SwiftUI
 import SwiftData
+
+private let logger = Logger(subsystem: "com.mariohernandez.Cue", category: "Persistence")
 
 struct AddTaskView: View {
     @Environment(\.modelContext) private var modelContext
@@ -63,7 +66,11 @@ struct AddTaskView: View {
 
         let task = DayTask(title: taskTitle, scheduledTime: scheduledTime, reminderOffset: reminderOffset)
         modelContext.insert(task)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            logger.error("Failed to save task '\(taskTitle)': \(error.localizedDescription)")
+        }
 
         Task {
             await NotificationManager.shared.schedule(for: task)

@@ -22,6 +22,7 @@ struct CueApp: App {
 
         Window("Settings", id: "settings") {
             SettingsView()
+                .modelContainer(for: DayTask.self)
         }
         .windowResizability(.contentSize)
         .defaultPosition(.center)

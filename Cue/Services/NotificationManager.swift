@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import os
 import UserNotifications
 
-@Observable
 final class NotificationManager {
     static let shared = NotificationManager()
 
     private let center = UNUserNotificationCenter.current()
+    private let logger = Logger(subsystem: "com.mariohernandez.Cue", category: "Notifications")
 
     private init() {}
 
@@ -56,7 +57,11 @@ final class NotificationManager {
             trigger: trigger
         )
 
-        try? await center.add(request)
+        do {
+            try await center.add(request)
+        } catch {
+            logger.error("Failed to schedule notification for task '\(task.title)': \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Cancel notification
