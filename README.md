@@ -6,7 +6,7 @@ A macOS menu bar app for quick daily task scheduling with timed notifications. C
 <img src="assets/Cue-Screenshot.png" alt="Cue Screenshot" width="400">
 
 <a href="https://apps.apple.com/es/app/cue-daily-task-reminders/id6759405004?mt=12">
-  <img src="https://developer.apple.com/assets/elements/badges/download-on-the-mac-app-store.svg" alt="Download on the Mac App Store" height="50">
+  <img src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-mac-app-store.svg" alt="Download on the Mac App Store" height="50">
 </a>
 
 ## Features
