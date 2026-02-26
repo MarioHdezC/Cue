@@ -41,10 +41,9 @@ struct AddTaskView: View {
                 Button("Settings...") {
                     openWindow(id: "settings")
                     Task { @MainActor in
-                        try? await Task.sleep(for: .milliseconds(100))
-                        NSApplication.shared.activate()
-                        for window in NSApplication.shared.windows where window.identifier?.rawValue == "settings" {
-                            window.makeKeyAndOrderFront(nil)
+                        if let window = NSApp.windows.first(where: { $0.title == "Settings" }) {
+                            window.orderFrontRegardless()
+                            window.makeKey()
                         }
                     }
                 }
