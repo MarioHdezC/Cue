@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import AppKit
 
 struct TaskListView: View {
     @Environment(\.modelContext) private var modelContext
@@ -39,6 +40,12 @@ struct TaskListView: View {
             AddTaskView(selectedDate: selectedDate)
         }
         .frame(width: 350, height: 400)
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+            selectedDate = .now
+        }
+        .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
+            selectedDate = .now
+        }
     }
 
     // MARK: - Subviews
