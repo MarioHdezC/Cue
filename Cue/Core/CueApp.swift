@@ -7,22 +7,36 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct CueApp: App {
+    static let sharedModelContainer: ModelContainer = {
+        do {
+            return try ModelContainer(for: DayTask.self)
+        } catch {
+            fatalError("Failed to create ModelContainer: \(error)")
+        }
+    }()
+
+    init() {
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+        NotificationManager.shared.registerCategories()
+    }
+
     var body: some Scene {
         MenuBarExtra("Cue", systemImage: "checklist") {
             TaskListView()
-                .modelContainer(for: DayTask.self)
+                .modelContainer(Self.sharedModelContainer)
                 .task {
-                    await NotificationManager.shared.requestAuthorization()
+                    _ = await NotificationManager.shared.requestAuthorization()
                 }
         }
         .menuBarExtraStyle(.window)
 
         Window("Settings", id: "settings") {
             SettingsView()
-                .modelContainer(for: DayTask.self)
+                .modelContainer(Self.sharedModelContainer)
         }
         .windowResizability(.contentSize)
         .defaultPosition(.center)
