@@ -63,9 +63,22 @@ struct TaskItemView: View {
 
             Spacer()
 
-            Text(task.scheduledTime, format: .dateTime.hour().minute())
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if let badge = task.overdueBadge {
+                Text(badge)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("·")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(task.scheduledTime, format: .dateTime.hour().minute())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(String(localized: "Overdue from yesterday"))
+            } else {
+                Text(task.scheduledTime, format: .dateTime.hour().minute())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 

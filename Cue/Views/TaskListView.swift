@@ -40,11 +40,16 @@ struct TaskListView: View {
             AddTaskView(selectedDate: selectedDate)
         }
         .frame(width: 350, height: 400)
+        .task {
+            TaskMigrator.shared.migrateOverdueTasks(in: modelContext)
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             selectedDate = .now
+            TaskMigrator.shared.migrateOverdueTasks(in: modelContext)
         }
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
             selectedDate = .now
+            TaskMigrator.shared.migrateOverdueTasks(in: modelContext)
         }
     }
 
