@@ -16,6 +16,7 @@ final class DayTask {
     var isCompleted: Bool
     var notificationID: String
     var createdAt: Date
+    var originalScheduledTime: Date?
 
     init(
         title: String,
@@ -23,7 +24,8 @@ final class DayTask {
         reminderOffset: Int = 15,
         isCompleted: Bool = false,
         notificationID: String = UUID().uuidString,
-        createdAt: Date = .now
+        createdAt: Date = .now,
+        originalScheduledTime: Date? = nil
     ) {
         self.title = title
         self.scheduledTime = scheduledTime
@@ -31,5 +33,15 @@ final class DayTask {
         self.isCompleted = isCompleted
         self.notificationID = notificationID
         self.createdAt = createdAt
+        self.originalScheduledTime = originalScheduledTime
+    }
+
+    var isOverdue: Bool {
+        originalScheduledTime != nil
+    }
+
+    var overdueBadge: String? {
+        guard originalScheduledTime != nil else { return nil }
+        return String(localized: "Yesterday")
     }
 }

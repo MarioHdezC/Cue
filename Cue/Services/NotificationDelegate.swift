@@ -53,6 +53,7 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     private func handleComplete(notificationID: String) async {
         guard let task = fetchTask(notificationID: notificationID) else { return }
         task.isCompleted = true
+        task.originalScheduledTime = nil
         NotificationManager.shared.cancel(for: task)
         save(context: task.modelContext)
     }
@@ -64,6 +65,7 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         let offsetSeconds = TimeInterval(task.reminderOffset * 60)
         task.scheduledTime = Date.now.addingTimeInterval(seconds + offsetSeconds)
         task.isCompleted = false
+        task.originalScheduledTime = nil
 
         NotificationManager.shared.cancel(for: task)
         save(context: task.modelContext)
@@ -81,6 +83,7 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 
         task.scheduledTime = tomorrow
         task.isCompleted = false
+        task.originalScheduledTime = nil
 
         NotificationManager.shared.cancel(for: task)
         save(context: task.modelContext)
