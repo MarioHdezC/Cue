@@ -48,6 +48,7 @@ final class TaskMigrator {
             ) ?? Date.now
 
             NotificationManager.shared.cancel(for: task)
+            Task { await NotificationManager.shared.schedule(for: task) }
 
             logger.info("Migrated overdue task '\(task.title)' to today")
         }
